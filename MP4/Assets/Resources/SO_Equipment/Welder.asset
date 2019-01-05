@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a74b5251301cc11428140f3c7059ec00, type: 3}
+  m_Name: Welder
+  m_EditorClassIdentifier: 
+  type: 7
+  state: 0
+  holderOperator: 0
+  stowingEqpt: {fileID: 0}
+  highlighted: 0
+  stowable: 0100000002000000
+  stowed: []
+  possibleCommands:
+  - {fileID: 11400000, guid: 1792a715cd6e76f44bfcfa55008f1e3a, type: 2}
+  - {fileID: 11400000, guid: d1a4c90291576f145b8786fd87bacfc7, type: 2}
+  - {fileID: 11400000, guid: c4a533a215b94624593740d420623215, type: 2}
+  - {fileID: 11400000, guid: 3c3fcc7eed3269640b2e83763262660f, type: 2}
+  - {fileID: 11400000, guid: eed41dce47f957644a29c023b9d7ccd8, type: 2}

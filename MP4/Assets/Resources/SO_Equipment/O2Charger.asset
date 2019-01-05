@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a74b5251301cc11428140f3c7059ec00, type: 3}
+  m_Name: O2Charger
+  m_EditorClassIdentifier: 
+  type: 8
+  state: 3
+  holderOperator: 0
+  stowingEqpt: {fileID: 0}
+  highlighted: 0
+  stowable: 00000000
+  stowed: []
+  possibleCommands:
+  - {fileID: 11400000, guid: 943d58f76d8fa8444873824926664488, type: 2}
+  - {fileID: 11400000, guid: ccbe49805d95a0f4e9f7a28e9959778a, type: 2}
+  - {fileID: 11400000, guid: 11ae80d789cc8eb4e92c3db57cd4ba51, type: 2}
