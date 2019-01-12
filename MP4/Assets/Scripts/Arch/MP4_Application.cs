@@ -45,6 +45,7 @@ public class MP4_Application : MonoBehaviour {
 	void Update () {
 		for (int i = 0; i < _schedule.Count; i++)
         {
+            //Debug.Log(_schedule[i].priority);
             _schedule[i].S_PauseableUpdate();
             _schedule[i].S_Update();
             //Debug.Log(_schedule.Count);

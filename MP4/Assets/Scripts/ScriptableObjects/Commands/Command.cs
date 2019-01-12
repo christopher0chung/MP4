@@ -6,6 +6,7 @@ using UnityEngine;
 public class Command : ScriptableObject {
 
     public Reagent[] reagents = new Reagent[0];
+    public Thing[] consumables = new Thing[0];
     public bool playerPresenceRequired;
     public ServiceLocator.Actions action;
     //public ServiceLocator.Condition condition;

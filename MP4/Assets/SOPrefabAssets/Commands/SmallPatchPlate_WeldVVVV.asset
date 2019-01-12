@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557af8d81dbc1f1438869a000538ccff, type: 3}
+  m_Name: SmallPatchPlate_WeldVVVV
+  m_EditorClassIdentifier: 
+  reagents:
+  - {fileID: 11400000, guid: d0ba6b895ab0e3247992cd6a557cd609, type: 2}
+  - {fileID: 11400000, guid: 7751503742cf7aa459f69833e726c460, type: 2}
+  consumables: []
+  playerPresenceRequired: 1
+  action: 0
+  target: 4
+  actionType: 1
+  timeTotal: 15

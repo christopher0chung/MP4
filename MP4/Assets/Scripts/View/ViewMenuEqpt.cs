@@ -5,6 +5,7 @@ using UnityEngine;
 public class ViewMenuEqpt : MP4_ScheduledMono {
 
     private ModelGame _gameModel;
+    private ModelObjectInteraction _objIntModel;
 
     private Transform _canvas;
 
@@ -13,18 +14,15 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
     private Transform _p0_Title;
     private Transform _p0_Cursor;
     private Transform _p0_Option1;
-    private Transform _p0_Option2;
-    private Transform _p0_Option3;
-    private Transform _p0_Option4;
+    private Transform[] _p0_Options;
 
     private Transform _p1_MenuParent;
     private Transform _p1_Bkgd;
     private Transform _p1_Title;
     private Transform _p1_Cursor;
     private Transform _p1_Option1;
-    private Transform _p1_Option2;
-    private Transform _p1_Option3;
-    private Transform _p1_Option4;
+    private Transform[] _p1_Options;
+
 
     private bool _p0;
     private bool _p0_EqptMenu_Active
@@ -38,7 +36,10 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
             if (value != _p0)
             {
                 if (value)
+                {
+                    _ParseInteractionCommands(ServiceLocator.ID.p0);
                     _MakeVisible_P0();
+                }
                 else
                     _MakeNotVisible_P0();
                 _p0 = value;
@@ -71,6 +72,7 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
         base.Awake();
 
         _gameModel = ServiceLocator.Instance.Model.GetComponent<ModelGame>();
+        _objIntModel = ServiceLocator.Instance.Model.GetComponent<ModelObjectInteraction>();
 
         _canvas = ServiceLocator.Instance.View.Find("Canvas");
 
@@ -81,18 +83,12 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
         _p0_Title = _p0_MenuParent.Find("P0 Title");
         _p0_Cursor = _p0_MenuParent.Find("P0 Cursor");
         _p0_Option1 = _p0_MenuParent.Find("P0 Option 1");
-        _p0_Option2 = _p0_MenuParent.Find("P0 Option 2");
-        _p0_Option3 = _p0_MenuParent.Find("P0 Option 3");
-        _p0_Option4 = _p0_MenuParent.Find("P0 Option 4");
+
 
         _p1_Bkgd = _p1_MenuParent.Find("P1 Bkgd");
         _p1_Title = _p1_MenuParent.Find("P1 Title");
         _p1_Cursor = _p1_MenuParent.Find("P1 Cursor");
         _p1_Option1 = _p1_MenuParent.Find("P1 Option 1");
-        _p1_Option2 = _p1_MenuParent.Find("P1 Option 2");
-        _p1_Option3 = _p1_MenuParent.Find("P1 Option 3");
-        _p1_Option4 = _p1_MenuParent.Find("P1 Option 4");
-
 
         Debug.Assert(_p0_MenuParent != null);
         Debug.Assert(_p1_MenuParent != null);
@@ -101,17 +97,13 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
         Debug.Assert(_p0_Title != null);
         Debug.Assert(_p0_Cursor != null);
         Debug.Assert(_p0_Option1 != null);
-        Debug.Assert(_p0_Option1 != null);
-        Debug.Assert(_p0_Option1 != null);
-        Debug.Assert(_p0_Option1 != null);
+
 
         Debug.Assert(_p1_Bkgd != null);
         Debug.Assert(_p0_Title != null);
         Debug.Assert(_p0_Cursor != null);
         Debug.Assert(_p1_Option1 != null);
-        Debug.Assert(_p1_Option1 != null);
-        Debug.Assert(_p1_Option1 != null);
-        Debug.Assert(_p1_Option1 != null);
+
     }
 
     void Start () {
@@ -158,28 +150,28 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
                 //Debug.Log(_p0_Option1.localPosition + " " + _p0_Cursor.localPosition);
 
             }
-            else if (_gameModel.EqptMenuSelect_P0 == 1)
-            {
-                Vector3 cursorPos = _p0_Cursor.localPosition;
-                cursorPos.y = _p0_Option2.localPosition.y;
-                _p0_Cursor.localPosition = cursorPos;
-                //Debug.Log(_p0_Option2.localPosition + " " + _p0_Cursor.localPosition);
+            //else if (_gameModel.EqptMenuSelect_P0 == 1)
+            //{
+            //    Vector3 cursorPos = _p0_Cursor.localPosition;
+            //    cursorPos.y = _p0_Option2.localPosition.y;
+            //    _p0_Cursor.localPosition = cursorPos;
+            //    //Debug.Log(_p0_Option2.localPosition + " " + _p0_Cursor.localPosition);
 
-            }
-            else if (_gameModel.EqptMenuSelect_P0 == 2)
-            {
-                Vector3 cursorPos = _p0_Cursor.localPosition;
-                cursorPos.y = _p0_Option3.localPosition.y;
-                _p0_Cursor.localPosition = cursorPos;
-                //Debug.Log(_p0_Option3.localPosition + " " + _p0_Cursor.localPosition);
+            //}
+            //else if (_gameModel.EqptMenuSelect_P0 == 2)
+            //{
+            //    Vector3 cursorPos = _p0_Cursor.localPosition;
+            //    cursorPos.y = _p0_Option3.localPosition.y;
+            //    _p0_Cursor.localPosition = cursorPos;
+            //    //Debug.Log(_p0_Option3.localPosition + " " + _p0_Cursor.localPosition);
 
-            }
-            else if (_gameModel.EqptMenuSelect_P0 == 3)
-            {
-                Vector3 cursorPos = _p0_Cursor.localPosition;
-                cursorPos.y = _p0_Option4.localPosition.y;
-                _p0_Cursor.localPosition = cursorPos;
-            }
+            //}
+            //else if (_gameModel.EqptMenuSelect_P0 == 3)
+            //{
+            //    Vector3 cursorPos = _p0_Cursor.localPosition;
+            //    cursorPos.y = _p0_Option4.localPosition.y;
+            //    _p0_Cursor.localPosition = cursorPos;
+            //}
             else
             {
                 Vector3 cursorPos = _p0_Cursor.localPosition;
@@ -199,24 +191,24 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
                 cursorPos.y = _p1_Option1.localPosition.y;
                 _p1_Cursor.localPosition = cursorPos;
             }
-            else if (_gameModel.EqptMenuSelect_P1 == 1)
-            {
-                Vector3 cursorPos = _p1_Cursor.localPosition;
-                cursorPos.y = _p1_Option2.localPosition.y;
-                _p1_Cursor.localPosition = cursorPos;
-            }
-            else if (_gameModel.EqptMenuSelect_P1 == 2)
-            {
-                Vector3 cursorPos = _p1_Cursor.localPosition;
-                cursorPos.y = _p1_Option3.localPosition.y;
-                _p1_Cursor.localPosition = cursorPos;
-            }
-            else if (_gameModel.EqptMenuSelect_P1 == 3)
-            {
-                Vector3 cursorPos = _p1_Cursor.localPosition;
-                cursorPos.y = _p1_Option4.localPosition.y;
-                _p1_Cursor.localPosition = cursorPos;
-            }
+            //else if (_gameModel.EqptMenuSelect_P1 == 1)
+            //{
+            //    Vector3 cursorPos = _p1_Cursor.localPosition;
+            //    cursorPos.y = _p1_Option2.localPosition.y;
+            //    _p1_Cursor.localPosition = cursorPos;
+            //}
+            //else if (_gameModel.EqptMenuSelect_P1 == 2)
+            //{
+            //    Vector3 cursorPos = _p1_Cursor.localPosition;
+            //    cursorPos.y = _p1_Option3.localPosition.y;
+            //    _p1_Cursor.localPosition = cursorPos;
+            //}
+            //else if (_gameModel.EqptMenuSelect_P1 == 3)
+            //{
+            //    Vector3 cursorPos = _p1_Cursor.localPosition;
+            //    cursorPos.y = _p1_Option4.localPosition.y;
+            //    _p1_Cursor.localPosition = cursorPos;
+            //}
             else
             {
                 Vector3 cursorPos = _p1_Cursor.localPosition;
@@ -244,5 +236,46 @@ public class ViewMenuEqpt : MP4_ScheduledMono {
     private void _MakeNotVisible_P1()
     {
         _p1_MenuParent.localPosition = Vector3.up * 10000;
+    }
+
+    private void _ParseInteractionCommands(ServiceLocator.ID id)
+    {
+        if (id == ServiceLocator.ID.p0)
+        {
+            Debug.Assert(_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment ||
+                _objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Stations,
+                "Attempting to parse menu for command-less interactiveCategory");
+
+            int commandCount;
+
+            if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment)
+            {
+                Equipment_Base e = _objIntModel.p0_InteractableInterested as Equipment_Base;
+                if (e != null)
+                {
+                    //commandCount = e.possibleCommands.Length;
+                    //for (int i = 0; i < e.possibleCommands.Length; i++)
+                    //{
+                    //    bool shouldDecrement = false;
+
+                    //    if (_objIntModel.CountOfTypeInOOC(id, e.possibleCommands[i].target) == 0)
+                    //        shouldDecrement = true;
+                    //    if (e.possibleCommands[i].reagents.Length != 0)
+                    //    {
+                    //        foreach (Reagent r in e.possibleCommands[i].reagents)
+                    //        {
+                    //            if (_objIntModel.CountOfTypeInOOC(id, r.reagentType.type) == 0)
+                    //                shouldDecrement = true;
+                    //        }
+                    //    }
+
+                    //    if 
+                            
+                            
+                    //}
+                }
+            }
+
+        }
     }
 }

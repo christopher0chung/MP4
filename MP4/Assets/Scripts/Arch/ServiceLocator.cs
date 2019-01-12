@@ -16,6 +16,17 @@ public class ServiceLocator {
         }
     }
 
+    private MP4_EventManager _e;
+    public MP4_EventManager EManager
+    {
+        get
+        {
+            if (_e == null)
+                _e = new MP4_EventManager();
+            return _e;
+        }
+    }
+
     private Transform _a;
     public Transform Application
     {
@@ -82,6 +93,33 @@ public class ServiceLocator {
         }
     }
 
+    #region Functions
+
+    public bool DoesListOfThingsContainThingOfTypeItem(List<Thing> list, Interactives type)
+    {
+        foreach(Thing t in list)
+        {
+            Item_Base itemCheck = t as Item_Base;
+            if (itemCheck != null)
+                if (itemCheck.type == type)
+                    return true;
+        }
+        return false;
+    }
+    
+    public bool DoesListOfThingsContainThingOfTypeEquipment(List<Thing> list, Interactives type)
+    {
+        foreach (Thing t in list)
+        {
+            Equipment_Base eqptCheck = t as Equipment_Base;
+            if (eqptCheck != null)
+                if (eqptCheck.type == type)
+                    return true;
+        }
+        return false;
+    }
+        #endregion
+
     #region Enums
     public enum ID { p0, p1 }
     public enum ControlStates { Free, Menu_Eqpt, Station, Occupied, Disabled}
@@ -96,12 +134,18 @@ public class ServiceLocator {
         //Consumables
         SmallPatchPlate, LargePatchPlate, Fuses,
         //Equipment
-        Welder, O2Charger, ArCharger, BatteryCharger, N2Charger, Locker,
-        //Modifiable
-        Hull, Container, Accumulator, Pump, Motor, Gear, Valve, Linkage, Pipe, Breaker, Obstruction
+        Welder, O2Charger, ArCharger, BatteryCharger, N2Charger, Locker, Wrench, PryBar,
+        //Modifiables
+        Rupture, Leak, PatchedRupture, PatchedLeak, RepairedRupture, RepairedLeak, DepressurizedAccumulator, PressurizedAccumulator,
+        InoperablePump, OperatingPump, InoperableMotor, OperatingMotor, JammedGear, SpinningGear,
+        FailedShutValve, FailedOpenValve, ShutValve, OpenValve, TrippedBreaker, ResetBreaker, Obstruction, ClearedDebris,
+        //Stations
+        Stn_Helm, Stn_LeeHelm, Stn_Crane 
     }
 
-    public enum ItemStates { Loose, Held, Stowed }
+    public enum InteractivesCategory { Items, Equipment, Stations, Consumables, Modifiables }
+
+    public enum ItemStates { Loose, Held, Stowed, Ejecting }
 
     public enum EquipmentStates { Loose, Held, Stowed, Fixed, Operating }
 

@@ -6,6 +6,9 @@ public class ControllerGame : MP4_ScheduledMono {
 
     private ModelGame _gameModel;
     private ModelInput _inputModel;
+    private ModelObjectInteraction _objIntModel;
+
+    private ControllerObjectInteraction _objIntCtrlr;
 
     private SCG_FSM<ControllerGame> _GameStateFSM;
     private SCG_FSM<ControllerGame> _p0_PlayInputs;
@@ -17,13 +20,19 @@ public class ControllerGame : MP4_ScheduledMono {
     private Rigidbody _p0_RigidBody;
     private Rigidbody _p1_RigidBody;
 
+    public float tempTuning_LookRate;
+
+
     public override void Awake()
     {
-        priority = 2000;
+        priority = 2500;
         base.Awake();
 
         _gameModel = ServiceLocator.Instance.Model.GetComponent<ModelGame>();
         _inputModel = ServiceLocator.Instance.Model.GetComponent<ModelInput>();
+        _objIntModel = ServiceLocator.Instance.Model.GetComponent<ModelObjectInteraction>();
+
+        _objIntCtrlr = ServiceLocator.Instance.Controller.GetComponent<ControllerObjectInteraction>();
 
         _p0_Transfrom = ServiceLocator.Instance.Character0;
         _p1_Transform = ServiceLocator.Instance.Character1;
@@ -37,6 +46,11 @@ public class ControllerGame : MP4_ScheduledMono {
         _gameModel.SetGameState(ServiceLocator.GameStates.Play);
         _gameModel.SetControlState(ServiceLocator.ID.p0, ServiceLocator.ControlStates.Free);
         _gameModel.SetControlState(ServiceLocator.ID.p1, ServiceLocator.ControlStates.Free);
+        _gameModel.SetLookDir(ServiceLocator.ID.p0, Vector3.right);
+        _gameModel.SetLookDir(ServiceLocator.ID.p1, Vector3.right);
+        _gameModel.SetHands(ServiceLocator.ID.p0, GameObject.FindGameObjectWithTag("P0Hands").transform);
+        _gameModel.SetHands(ServiceLocator.ID.p1, GameObject.FindGameObjectWithTag("P1Hands").transform);
+        _gameModel.Init(50);
 
         _p0_PlayInputs = new SCG_FSM<ControllerGame>(this);
         _p1_PlayInputs = new SCG_FSM<ControllerGame>(this);
@@ -60,6 +74,8 @@ public class ControllerGame : MP4_ScheduledMono {
         else
             _GameStateFSM.TransitionTo<GameState_CutScene>();
     }
+
+
 
     #region Game State FSM
 
@@ -95,6 +111,25 @@ public class ControllerGame : MP4_ScheduledMono {
             else if (Context._gameModel.CtrlState_P1 == ServiceLocator.ControlStates.Station)
                 Context._p1_PlayInputs.TransitionTo<P1_ControlState_Station>();
         }
+
+        protected void _PlayerMassUpdate()
+        {
+            if (Context._objIntModel.p0_InteractableGrabbed != null)
+            {
+                float grabbedMass = Context._objIntModel.BodyOfThing(Context._objIntModel.p0_InteractableGrabbed).GetComponent<ViewThing_Generic>().serializedRigidBody.mass;
+                Context._p0_RigidBody.mass = Context._gameModel.playerBaseMass + grabbedMass;
+            }
+            else
+                Context._p0_RigidBody.mass = Context._gameModel.playerBaseMass;
+
+            if (Context._objIntModel.p1_InteractableGrabbed != null)
+            {
+                float grabbedMass = Context._objIntModel.BodyOfThing(Context._objIntModel.p1_InteractableGrabbed).GetComponent<ViewThing_Generic>().serializedRigidBody.mass;
+                Context._p1_RigidBody.mass = Context._gameModel.playerBaseMass + grabbedMass;
+            }
+            else
+                Context._p1_RigidBody.mass = Context._gameModel.playerBaseMass;
+        }
     }
 
     public class GameState_Play : StateBase
@@ -109,6 +144,8 @@ public class ControllerGame : MP4_ScheduledMono {
             base.Update();
 
             _ControlStateChangeCheck();
+
+            _PlayerMassUpdate();
 
             Context._p0_PlayInputs.Update();
             Context._p1_PlayInputs.Update();
@@ -195,9 +232,21 @@ public class ControllerGame : MP4_ScheduledMono {
             }
 
             if (Context._inputModel.P0_Grab_OnDown && !Context._inputModel.P0_Use_OnDown)
+            {
                 Debug.Log("P0 Attempt to grab");
+                if (Context._objIntModel.p0_InteractableGrabbed == null && Context._objIntModel.p0_InteractableInterested != null)
+                    Context._objIntCtrlr.AttemptToHold(ServiceLocator.ID.p0);
+                else if (Context._objIntModel.p0_InteractableGrabbed != null)
+                    Context._objIntCtrlr.Unhold(ServiceLocator.ID.p0);
+            }
             else if (!Context._inputModel.P0_Grab_OnDown && Context._inputModel.P0_Use_OnDown)
                 Debug.Log("P0 Attempt to use");
+
+            //Temp input scheme until controllers integrated
+            if (Input.GetKey(KeyCode.R))
+                Context._gameModel.SetLookDir(ServiceLocator.ID.p0, Quaternion.Euler(0, 0, Context.tempTuning_LookRate * Time.deltaTime) * Context._gameModel.P0_LookDir);
+            if (Input.GetKey(KeyCode.F))
+                Context._gameModel.SetLookDir(ServiceLocator.ID.p0, Quaternion.Euler(0, 0, -Context.tempTuning_LookRate * Time.deltaTime) * Context._gameModel.P0_LookDir);
         }
     }
 

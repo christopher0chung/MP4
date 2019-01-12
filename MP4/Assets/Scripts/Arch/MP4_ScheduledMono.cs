@@ -16,6 +16,9 @@ public class MP4_ScheduledMono : MonoBehaviour {
     public int priority;
     //1000 - Inputs
     //2000 - Game Logic
+    //  <2500 - Pre Movement
+    //  =2500 - Movement
+    //  >2500 - Post Movement
     //3000 - View Update
 
 	public virtual void S_Update () { }
