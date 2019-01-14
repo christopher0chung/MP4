@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ViewMenuGame : MP4_ScheduledMono {
 
+
     private ModelGame _gameModel;
 
     private Transform _canvas;
@@ -39,7 +40,7 @@ public class ViewMenuGame : MP4_ScheduledMono {
 
     public override void Awake()
     {
-        priority = 3001;
+        priority = 2999;
         base.Awake();
 
         _gameModel = ServiceLocator.Instance.Model.GetComponent<ModelGame>();

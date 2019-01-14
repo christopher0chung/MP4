@@ -13,8 +13,8 @@ public class ModelObjectInteraction : MonoBehaviour {
     public Thing p1_InteractableGrabbed { get; private set; }
 
     //Array so that it accepts output of spherecast
-    public Thing[] p0_Interactable_ObjsOfConcern { get; private set; }
-    public Thing[] p1_Interactable_ObjsOfConcern { get; private set; }
+    public Thing[] p0_Interactable_ObjsOfConcern;
+    public Thing[] p1_Interactable_ObjsOfConcern;
 
     public void SetInteractableInterested (ServiceLocator.ID id, Thing interactable)
     {
