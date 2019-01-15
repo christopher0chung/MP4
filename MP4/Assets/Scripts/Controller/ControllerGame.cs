@@ -240,7 +240,18 @@ public class ControllerGame : MP4_ScheduledMono {
                     Context._objIntCtrlr.Unhold(ServiceLocator.ID.p0);
             }
             else if (!Context._inputModel.P0_Grab_OnDown && Context._inputModel.P0_Use_OnDown)
+            {
                 Debug.Log("P0 Attempt to use");
+                if (Context._objIntModel.p0_InteractableInterested != null)
+                {
+                    if (Context._objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment 
+                        // should also permit stn//
+                        )
+                    {
+                        TransitionTo<P0_ControlState_MenuEqpt>();
+                    }
+                }
+            }
 
             //Temp input scheme until controllers integrated
             if (Input.GetKey(KeyCode.R))

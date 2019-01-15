@@ -1168,7 +1168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7848d4fb527d38e4b88b942d4101fa01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
+  type: 7
   startingCapacity: 100
   stowedOrInstalled: 
 --- !u!1 &764789541

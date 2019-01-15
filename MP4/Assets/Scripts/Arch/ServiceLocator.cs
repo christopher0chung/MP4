@@ -140,7 +140,9 @@ public class ServiceLocator {
         InoperablePump, OperatingPump, InoperableMotor, OperatingMotor, JammedGear, SpinningGear,
         FailedShutValve, FailedOpenValve, ShutValve, OpenValve, TrippedBreaker, ResetBreaker, Obstruction, ClearedDebris,
         //Stations
-        Stn_Helm, Stn_LeeHelm, Stn_Crane 
+        Stn_Helm, Stn_LeeHelm, Stn_Crane,
+        //None
+        None
     }
 
     public enum InteractivesCategory { Items, Equipment, Stations, Consumables, Modifiables }
@@ -149,7 +151,7 @@ public class ServiceLocator {
 
     public enum EquipmentStates { Loose, Held, Stowed, Fixed, Operating }
 
-    public enum Actions { Weld, Patch, Power, Charge, Energize, Shut, Repair, Install, Eject, Stow, Unstow }
+    public enum Actions { Weld, Patch, Power, Charge, Energize, Shut, Repair, Install, Eject, Stow, Unstow, Cancel }
     public enum ActionType { Discrete, Continuous }
     //public enum Condition { Leaking, Ruptured, Underpowered, Unpowered, Tripped, MechanicallyFailed, CatastrophiclyFailed, Discharged, Required, Patched, This }
     #endregion
