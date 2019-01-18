@@ -9,6 +9,7 @@ public class ControllerGame : MP4_ScheduledMono {
     private ModelObjectInteraction _objIntModel;
 
     private ControllerObjectInteraction _objIntCtrlr;
+    private ControllerMenuEqpt _eqptMenuCtrlr;
 
     private SCG_FSM<ControllerGame> _GameStateFSM;
     private SCG_FSM<ControllerGame> _p0_PlayInputs;
@@ -33,6 +34,7 @@ public class ControllerGame : MP4_ScheduledMono {
         _objIntModel = ServiceLocator.Instance.Model.GetComponent<ModelObjectInteraction>();
 
         _objIntCtrlr = ServiceLocator.Instance.Controller.GetComponent<ControllerObjectInteraction>();
+        _eqptMenuCtrlr = ServiceLocator.Instance.Controller.GetComponent<ControllerMenuEqpt>();
 
         _p0_Transfrom = ServiceLocator.Instance.Character0;
         _p1_Transform = ServiceLocator.Instance.Character1;
@@ -116,7 +118,7 @@ public class ControllerGame : MP4_ScheduledMono {
         {
             if (Context._objIntModel.p0_InteractableGrabbed != null)
             {
-                float grabbedMass = Context._objIntModel.BodyOfThing(Context._objIntModel.p0_InteractableGrabbed).GetComponent<ViewThing_Generic>().serializedRigidBody.mass;
+                float grabbedMass = Context._objIntModel.GetBodyOfThing(Context._objIntModel.p0_InteractableGrabbed).GetComponent<ViewThing_Generic>().serializedRigidBody.mass;
                 Context._p0_RigidBody.mass = Context._gameModel.playerBaseMass + grabbedMass;
             }
             else
@@ -124,7 +126,7 @@ public class ControllerGame : MP4_ScheduledMono {
 
             if (Context._objIntModel.p1_InteractableGrabbed != null)
             {
-                float grabbedMass = Context._objIntModel.BodyOfThing(Context._objIntModel.p1_InteractableGrabbed).GetComponent<ViewThing_Generic>().serializedRigidBody.mass;
+                float grabbedMass = Context._objIntModel.GetBodyOfThing(Context._objIntModel.p1_InteractableGrabbed).GetComponent<ViewThing_Generic>().serializedRigidBody.mass;
                 Context._p1_RigidBody.mass = Context._gameModel.playerBaseMass + grabbedMass;
             }
             else
@@ -244,11 +246,11 @@ public class ControllerGame : MP4_ScheduledMono {
                 Debug.Log("P0 Attempt to use");
                 if (Context._objIntModel.p0_InteractableInterested != null)
                 {
-                    if (Context._objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment 
+                    if (Context._objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Equipment 
                         // should also permit stn//
                         )
                     {
-                        TransitionTo<P0_ControlState_MenuEqpt>();
+                        Context._gameModel.SetControlState(ServiceLocator.ID.p0, ServiceLocator.ControlStates.Menu_Eqpt);
                     }
                 }
             }
@@ -297,21 +299,11 @@ public class ControllerGame : MP4_ScheduledMono {
             base.Update();
             if (Context._inputModel.P0_Up_OnDown)
             {
-                int selection = Context._gameModel.EqptMenuSelect_P0;
-                selection--;
-                if (selection < 0)
-                    selection = 3;
-                Context._gameModel.EqptMenuSelect_P0 = selection;
-                Debug.Log("P0 menu up");
+                Context._gameModel.EqptMenuSelect_P0--;
             }
             if (Context._inputModel.P0_Down_OnDown)
             {
-                int selection = Context._gameModel.EqptMenuSelect_P0;
-                selection++;
-                if (selection > 3)
-                    selection = 0;
-                Context._gameModel.EqptMenuSelect_P0 = selection;
-                Debug.Log("P0 menu down");
+                Context._gameModel.EqptMenuSelect_P0++;
             }
             if (Context._inputModel.P0_Left_OnDown)
                 Debug.Log("P0 menu left");
@@ -319,7 +311,10 @@ public class ControllerGame : MP4_ScheduledMono {
                 Debug.Log("P0 menu right");
 
             if (Context._inputModel.P0_Use_OnDown && !Context._inputModel.P0_Grab_OnDown)
+            {
                 Debug.Log("P0 menu accept");
+                Context._eqptMenuCtrlr.ExecuteCommand(ServiceLocator.ID.p0);
+            }
             else if (Context._inputModel.P0_Grab_OnDown && !Context._inputModel.P0_Use_OnDown)
             {
                 Debug.Log("P0 menu cancel");

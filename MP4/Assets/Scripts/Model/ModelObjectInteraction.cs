@@ -51,7 +51,7 @@ public class ModelObjectInteraction : MonoBehaviour {
             p1_InteractableGrabbed = null;
     }
 
-    public Vector3 WhereIsThing(Thing thing)
+    public Vector3 GetWhereIsThing(Thing thing)
     {
         Debug.Assert(RegisteredInteractableObject.ContainsKey(thing), "Asking for location of unregistered item");
 
@@ -61,7 +61,7 @@ public class ModelObjectInteraction : MonoBehaviour {
         return thingGO.transform.position;
     }
 
-    public GameObject BodyOfThing(Thing thing)
+    public GameObject GetBodyOfThing(Thing thing)
     {
         Debug.Assert(RegisteredInteractableObject.ContainsKey(thing), "Asking for gameobject of unregistered item");
 
@@ -71,7 +71,7 @@ public class ModelObjectInteraction : MonoBehaviour {
         return thingGO;
     }
 
-    public int CountOfTypeInOOC (ServiceLocator.ID id, ServiceLocator.Interactives type)
+    public int CountOfTypeInOOC (ServiceLocator.ID id, ServiceLocator.ThingType type)
     {
         if (id == ServiceLocator.ID.p0)
         {
@@ -105,7 +105,7 @@ public class ModelObjectInteraction : MonoBehaviour {
         }
     }
 
-    public Thing ClosestThingOfTypeInOOC (ServiceLocator.ID id, ServiceLocator.Interactives type)
+    public Thing ClosestThingOfTypeInOOC (ServiceLocator.ID id, ServiceLocator.ThingType type)
     {
         Thing[] examinedOOC;
         Thing examinedObjectOfInterest;
@@ -151,8 +151,8 @@ public class ModelObjectInteraction : MonoBehaviour {
             Thing currentClosestThing = null;
             for (int i = 0; i < allOfTypeInOOC.Count; i++)
             {
-                Vector3 pos1 = WhereIsThing(examinedObjectOfInterest);
-                Vector3 pos2 = WhereIsThing(allOfTypeInOOC[i]);
+                Vector3 pos1 = GetWhereIsThing(examinedObjectOfInterest);
+                Vector3 pos2 = GetWhereIsThing(allOfTypeInOOC[i]);
                 if (Vector3.Distance(pos1, pos2) < shortestDist)
                     currentClosestThing = allOfTypeInOOC[i];
             }

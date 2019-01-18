@@ -95,7 +95,7 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
     {
         if (_objIntModel.p0_InteractableInterested != null)
         {
-            scratchColliderArray = Physics.OverlapSphere(_objIntModel.WhereIsThing(_objIntModel.p0_InteractableInterested), _tuning_OOCRange, selectInteractables);
+            scratchColliderArray = Physics.OverlapSphere(_objIntModel.GetWhereIsThing(_objIntModel.p0_InteractableInterested), _tuning_OOCRange, selectInteractables);
             if (scratchColliderArray.Length != 0)
             {
                 scratchThingArray = new Thing[scratchColliderArray.Length];
@@ -118,7 +118,7 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
 
         if (_objIntModel.p1_InteractableInterested != null)
         {
-            scratchColliderArray = Physics.OverlapSphere(_objIntModel.WhereIsThing(_objIntModel.p1_InteractableInterested), _tuning_OOCRange);
+            scratchColliderArray = Physics.OverlapSphere(_objIntModel.GetWhereIsThing(_objIntModel.p1_InteractableInterested), _tuning_OOCRange);
             if (scratchColliderArray.Length != 0)
             {
                 scratchThingArray = new Thing[scratchColliderArray.Length];
@@ -136,12 +136,80 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
         _objIntModel.SetOOCs(ServiceLocator.ID.p1, scratchThingArray);
     }
 
+    private void _Helper_AutoShiftBodyLayer(Thing t)
+    {
+        GameObject body = _objIntModel.GetBodyOfThing(t);
+        if (body != null)
+        {
+            if (t.cat == ServiceLocator.ThingCategory.Items)
+            {
+                Item_Base i = t as Item_Base;
+                Debug.Assert(i != null, "Item and category mismatch");
+
+                if (i.state == ServiceLocator.ItemStates.Stowed)
+                {
+                    body.layer = 10;
+                    //Debug.Log(body.layer);
+                }
+                else
+                {
+                    body.layer = 9;
+                    //Debug.Log(body.layer);
+                }
+            }
+            else if (t.cat == ServiceLocator.ThingCategory.Equipment)
+            {
+                Equipment_Base e = t as Equipment_Base;
+                Debug.Assert(e != null, "Equipment and category mismatch");
+
+                if (e.state == ServiceLocator.EquipmentStates.Stowed)
+                {
+                    body.layer = 10;
+                    //Debug.Log(body.layer);
+                }
+                else
+                {
+                    body.layer = 9;
+                    //Debug.Log(body.layer);
+                }
+            }
+        }
+    }
+
+    private void _Helper_SetBodyLayerUsingState(GameObject body, Thing data)
+    {
+        int layerToSet;
+
+        Item_Base i = data as Item_Base;
+        Equipment_Base e = data as Equipment_Base;
+        if (i != null)
+        {
+            if (i.state == ServiceLocator.ItemStates.Stowed)
+                layerToSet = 10;
+            else
+                layerToSet = 9;
+        }
+        else if (e != null)
+        {
+            if (e.state == ServiceLocator.EquipmentStates.Stowed)
+                layerToSet = 10;
+            else
+                layerToSet = 9;
+        }
+        else
+            layerToSet = 9;
+
+        Debug.Log(body.name + " " + layerToSet);
+
+        body.layer = layerToSet;
+    }
+
     #region Asynchronous External Functions
     public void AttemptToHold(ServiceLocator.ID id)
     {
         if (id == ServiceLocator.ID.p0)
         {       
-            if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Items)
+            if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Items)
             {
                 Item_Base i = _objIntModel.p0_InteractableInterested as Item_Base;
                 if (i != null)
@@ -153,7 +221,7 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
 
                 }
             }
-            else if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment)
+            else if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Equipment)
             {
                 Equipment_Base e = _objIntModel.p0_InteractableInterested as Equipment_Base;
                 if (e != null)
@@ -173,7 +241,7 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
     {
         if (id == ServiceLocator.ID.p0)
         {
-            if (_objIntModel.p0_InteractableGrabbed.cat == ServiceLocator.InteractivesCategory.Items)
+            if (_objIntModel.p0_InteractableGrabbed.cat == ServiceLocator.ThingCategory.Items)
             {
                 Item_Base i = _objIntModel.p0_InteractableGrabbed as Item_Base;
                 if (i != null)
@@ -182,7 +250,7 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
                     _objIntModel.SetDrop(ServiceLocator.ID.p0);
                 }
             }
-            else if (_objIntModel.p0_InteractableGrabbed.cat == ServiceLocator.InteractivesCategory.Equipment)
+            else if (_objIntModel.p0_InteractableGrabbed.cat == ServiceLocator.ThingCategory.Equipment)
             {
                 Equipment_Base e = _objIntModel.p0_InteractableGrabbed as Equipment_Base;
                 if (e != null)
@@ -193,6 +261,100 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
             }
         }
     }
+
+    public void StowAndInstall(Equipment_Base eqptThatWillPossess, Thing thingToStore)
+    {
+        eqptThatWillPossess.stowed.Add(thingToStore);
+        if (thingToStore.cat == ServiceLocator.ThingCategory.Items)
+        {
+            Item_Base i = thingToStore as Item_Base;
+            Debug.Assert(i != null, "Item type and category mismatch");
+
+            i.stowingEqpt = eqptThatWillPossess;
+            i.state = ServiceLocator.ItemStates.Stowed;
+
+            _Helper_AutoShiftBodyLayer(i);
+        }
+        else if(thingToStore.cat == ServiceLocator.ThingCategory.Equipment)
+        {
+            Equipment_Base e = thingToStore as Equipment_Base;
+            Debug.Assert(e != null, "Equipment type and category mismatch");
+
+            e.stowingEqpt = eqptThatWillPossess;
+            e.state = ServiceLocator.EquipmentStates.Stowed;
+
+            _Helper_AutoShiftBodyLayer(e);
+        }
+        else
+        {
+            // *** Still requires consumable implementation ***
+            Debug.Log("Attempting to stow invalid InteractiveCategory thing");
+        }
+    }
+
+    public void Unstow(Equipment_Base eqptUnstower, Thing thingUnstowee)
+    {
+        if (!eqptUnstower.stowed.Contains(thingUnstowee))
+            Debug.Log("Attempting to unstow an item that is not stowed in this eqpt");
+
+        eqptUnstower.stowed.Remove(thingUnstowee);
+        if (thingUnstowee.cat == ServiceLocator.ThingCategory.Items)
+        {
+            Item_Base i = thingUnstowee as Item_Base;
+            Debug.Assert(i != null, "Item type and category mismatch");
+
+            i.stowingEqpt = null;
+            i.state = ServiceLocator.ItemStates.Loose;
+
+            _Helper_AutoShiftBodyLayer(i);
+            _objIntModel.GetBodyOfThing(i).transform.position += Vector3.right;
+        }
+        else if (thingUnstowee.cat == ServiceLocator.ThingCategory.Equipment)
+        {
+            Equipment_Base e = thingUnstowee as Equipment_Base;
+            Debug.Assert(e != null, "Equipment type and category mismatch");
+
+            e.stowingEqpt = null;
+            e.state = ServiceLocator.EquipmentStates.Loose;
+            _objIntModel.GetBodyOfThing(e).transform.position += Vector3.right;
+
+            _Helper_AutoShiftBodyLayer(e);
+        }
+        else
+        {
+            // *** Still requires consumable implementation ***
+            Debug.Log("Attempting to stow invalid InteractiveCategory thing");
+        }
+
+        Vector3 eqptPos = _objIntModel.GetWhereIsThing(eqptUnstower);
+
+        _objIntModel.GetBodyOfThing(thingUnstowee).transform.position = eqptPos + Vector3.right;
+
+    }
+
+    public void Eject(Equipment_Base eqptEjector, Thing thingEjectee)
+    {
+        if (!eqptEjector.stowed.Contains(thingEjectee))
+            Debug.Log("Attempting to eject an item that is not stowed in this eqpt");
+
+        eqptEjector.stowed.Remove(thingEjectee);
+        if (thingEjectee.cat == ServiceLocator.ThingCategory.Items)
+        {
+            Item_Base i = thingEjectee as Item_Base;
+            Debug.Assert(i != null, "Item type and category mismatch");
+
+            i.stowingEqpt = null;
+            i.state = ServiceLocator.ItemStates.Loose;
+
+            _Helper_AutoShiftBodyLayer(i);
+            _objIntModel.GetBodyOfThing(i).transform.position += Vector3.right;
+        }
+        else
+        {
+            Debug.Log("Attempting to eject invalid InteractiveCategory thing");
+        }
+    }
+
     #endregion
 
     #region Event Handler
@@ -203,30 +365,27 @@ public class ControllerObjectInteraction : MP4_ScheduledMono {
         {
             Debug.Assert(!_objIntModel.RegisteredInteractableObject.ContainsKey(n.data), "Attempting to register an interactible that is already registered");
 
-            GameObject body = new GameObject();
+            GameObject body = new GameObject(n.data.type.ToString());
+
+            Debug.Log(n.startStowedOrInstalled);
+
+            _Helper_SetBodyLayerUsingState(body, n.data);
+
             body.transform.SetParent(ServiceLocator.Instance.View.Find("InteractiveAssets"));
             body.transform.position = n.pos;
-            body.name = n.data.type.ToString();
-            body.layer = 9;
 
-            if (n.data.type == ServiceLocator.Interactives.ArTank ||
-                n.data.type == ServiceLocator.Interactives.Battery ||
-                n.data.type == ServiceLocator.Interactives.N2Tank ||
-                n.data.type == ServiceLocator.Interactives.O2Tank)
+            if (n.data.cat == ServiceLocator.ThingCategory.Items)
             {
                 ViewItem itemView = body.AddComponent<ViewItem>();
                 itemView.SetData(n.data as Item_Base);
             }
 
-            else if (n.data.type == ServiceLocator.Interactives.ArCharger ||
-                n.data.type == ServiceLocator.Interactives.BatteryCharger ||
-                n.data.type == ServiceLocator.Interactives.N2Charger ||
-                n.data.type == ServiceLocator.Interactives.O2Charger ||
-                n.data.type == ServiceLocator.Interactives.Welder)
+            else if (n.data.cat == ServiceLocator.ThingCategory.Equipment)
             {
                 ViewEqpt eqptView = body.AddComponent<ViewEqpt>();
-                // eqptView.SetData();
+                eqptView.SetData(n.data as Equipment_Base);
             }
+
             _objIntModel.RegisteredInteractableObject.Add(n.data, body);
         }
     }

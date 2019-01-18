@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ControllerMenuEqpt : MP4_ScheduledMono {
+
+    #region Properties and References
     private ModelGame _gameModel;
     private ModelObjectInteraction _objIntModel;
     private ModelMenuEqpt _eqptMenuModel;
+    private ControllerObjectInteraction _objIntCtrlr;
 
     private Transform _canvas;
 
@@ -27,6 +30,7 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
                 {
                     _ParseInteractionCommands(ServiceLocator.ID.p0);
                     _MakeVisible_P0();
+                    _gameModel.EqptMenuSelect_P0 = 0;
                 }
                 else
                     _MakeNotVisible_P0();
@@ -54,14 +58,19 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
         }
     }
 
+    #endregion
+
+    #region Sequence and Structure
+
     public override void Awake()
     {
-        priority = 3000;
+        priority = 2999;
         base.Awake();
 
         _gameModel = ServiceLocator.Instance.Model.GetComponent<ModelGame>();
         _objIntModel = ServiceLocator.Instance.Model.GetComponent<ModelObjectInteraction>();
         _eqptMenuModel = ServiceLocator.Instance.Model.GetComponent<ModelMenuEqpt>();
+        _objIntCtrlr = ServiceLocator.Instance.Controller.GetComponent<ControllerObjectInteraction>();
 
         _canvas = ServiceLocator.Instance.View.Find("Canvas");
 
@@ -71,8 +80,6 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
         Debug.Assert(_p0_MenuParent != null);
         Debug.Assert(_p1_MenuParent != null);
     }
-
-    #region Sequence and Structure
 
     void Start()
     {
@@ -116,15 +123,10 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
     {
         if (_p0_EqptMenu_Active)
         {
-            if (_gameModel.EqptMenuSelect_P0 == 0)
-            {
-
-            }
-
-            else
-            {
-
-            }
+            if (_gameModel.EqptMenuSelect_P0 < 0)
+                _gameModel.EqptMenuSelect_P0 = _eqptMenuModel.p0EqptCommandsActive.Count - 1;
+            if (_gameModel.EqptMenuSelect_P0 >= _eqptMenuModel.p0EqptCommandsActive.Count)
+                _gameModel.EqptMenuSelect_P0 = 0;
         }
     }
 
@@ -132,14 +134,10 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
     {
         if (_p1_EqptMenu_Active)
         {
-            if (_gameModel.EqptMenuSelect_P1 == 0)
-            {
-
-            }
-            else
-            {
-
-            }
+            if (_gameModel.EqptMenuSelect_P1 < 0)
+                _gameModel.EqptMenuSelect_P1 = _eqptMenuModel.p1EqptCommandsActive.Count - 1;
+            if (_gameModel.EqptMenuSelect_P1 >= _eqptMenuModel.p1EqptCommandsActive.Count)
+                _gameModel.EqptMenuSelect_P1 = 0;
         }
     }
 
@@ -169,43 +167,66 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
     {
         if (id == ServiceLocator.ID.p0)
         {
-            Debug.Assert(_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment ||
-                _objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Stations,
+            Debug.Assert(_objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Equipment ||
+                _objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Stations,
                 "Attempting to parse menu for command-less interactiveCategory");
 
-            if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Equipment)
+            if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Equipment)
             {
+                //Debug.Log("ControllerMenuEqpt in the equipment track");
                 Equipment_Base e = _objIntModel.p0_InteractableInterested as Equipment_Base;
                 if (e != null)
                 {
-
-                    CommandReferences cRef;
+                    //Debug.Log(this.GetType().ToString() + " identified as eqpt");
                     Dictionary<Command, CommandReferences> commandDict = new Dictionary<Command, CommandReferences>();
+                    Dictionary<int, Command> seqDict = new Dictionary<int, Command>();
 
                     for (int i = 0; i < e.possibleCommands.Length; i++)
                     {
+                        Debug.Log(this.GetType().ToString() + " in the for loop. possiblecommands length is " + e.possibleCommands.Length + ".");
+
                         bool commandPermissible = false;
 
-                        if (_ReqdReagentConditionsMet(id, e, e.possibleCommands[i]) && _ReqdConsumablesPresent(id, e.possibleCommands[i]) && _IntendedTargetPresent(id, e, e.possibleCommands[i]))
+                        if (_ReqdReagentConditionsMet(id, e, e.possibleCommands[i]) && 
+                            _ReqdConsumablesPresent(id, e.possibleCommands[i]) && 
+                            _IntendedTargetPresent(id, e, e.possibleCommands[i]) &&
+                            _SpecialConditions(id, e, e.possibleCommands[i]))
                         {
                             commandPermissible = true;
+                            Debug.Log("Command is permissible");
                         }
 
                         if (commandPermissible)
                         {
-                            cRef = ScriptableObject.Instantiate(Resources.Load<CommandReferences>("CommandReference/CommandReference"));
+                            CommandReferences cRef = ScriptableObject.Instantiate<CommandReferences>(Resources.Load<CommandReferences>("CommandReference/CommandReference"));
                             _StoreConsumablesRefs(id, cRef, e.possibleCommands[i]);
                             _StoreReagentsRefs(id, e, cRef, e.possibleCommands[i]);
-                            _StoreTargetRefs(id, cRef, e.possibleCommands[i]);
+                            _StoreTargetRefs(id, e, cRef, e.possibleCommands[i]);
+                            Debug.Log("CHecking if CREF EXISTS?!?!?!? " + cRef.target.ToString());
 
                             commandDict.Add(e.possibleCommands[i], cRef);
+                            seqDict.Add(seqDict.Count, e.possibleCommands[i]);
                         }
                     }
-                    commandDict.Add(Resources.Load<Command>("Command/ExitMenu"), Resources.Load<CommandReferences>("CommandReference/CommandReference"));
-                    _eqptMenuModel.SetCommands(id, commandDict);
+
+                    //Debug.Log("SeqDict count is " + seqDict.Count);
+                    Command cancel = Resources.Load<Command>("Command/ExitMenu");
+                    //Debug.Log(cancel.name);
+
+                    CommandReferences cancelCRef = ScriptableObject.Instantiate(Resources.Load<CommandReferences>("CommandReference/CommandReference"));
+                    commandDict.Add(cancel, cancelCRef);
+                    //Debug.Log("SeqDict count is " + seqDict.Count);
+
+                    seqDict.Add(seqDict.Count, cancel);
+                    //Debug.Log("SeqDict count is " + seqDict.Count);
+
+                    //Debug.Log(commandDict.Count + " " + seqDict.Count);
+
+                    //Debug.Log("Reagent Refs has :" + cRef.reagentRefs.Count);
+                    _eqptMenuModel.SetCommands(id, e, commandDict, seqDict);
                 }
             }
-            else if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.InteractivesCategory.Stations)
+            else if (_objIntModel.p0_InteractableInterested.cat == ServiceLocator.ThingCategory.Stations)
             {
                 //Stn code
             }
@@ -266,7 +287,7 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
         // If the cmd does require reagents, and the eqpt has the required reagents, then stowage is gtg
         else
         {
-            List<ServiceLocator.Interactives> typesStowed = new List<ServiceLocator.Interactives>();
+            List<ServiceLocator.ThingType> typesStowed = new List<ServiceLocator.ThingType>();
 
             if (e.stowed.Count == 0)
                 return false;
@@ -310,7 +331,7 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
 
         else
         {
-            List<ServiceLocator.Interactives> typesPresent = new List<ServiceLocator.Interactives>();
+            List<ServiceLocator.ThingType> typesPresent = new List<ServiceLocator.ThingType>();
 
             for (int i = 0; i < _objIntModel.p0_Interactable_ObjsOfConcern.Length; i++)
             {
@@ -335,7 +356,7 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
         // Internal targets
         if (cmd.action == ServiceLocator.Actions.Charge || cmd.action == ServiceLocator.Actions.Eject || cmd.action == ServiceLocator.Actions.Unstow)
         {
-            List<ServiceLocator.Interactives> _stowedTypes = new List<ServiceLocator.Interactives>();
+            List<ServiceLocator.ThingType> _stowedTypes = new List<ServiceLocator.ThingType>();
             foreach (Thing t in e.stowed)
             {
                 _stowedTypes.Add(t.type);
@@ -356,6 +377,23 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
         }
     }
 
+    private bool _SpecialConditions(ServiceLocator.ID id, Equipment_Base e, Command cmd)
+    {
+        if (cmd.action == ServiceLocator.Actions.Install)
+        {
+            List<ServiceLocator.ThingType> installedTypes = new List<ServiceLocator.ThingType>();
+            for (int i = 0; i < e.stowed.Count; i++)
+                installedTypes.Add(e.stowed[i].type);
+            if (installedTypes.Contains(cmd.target))
+                return false;
+            else return true;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     private void _StoreConsumablesRefs(ServiceLocator.ID id, CommandReferences cRef, Command cmd)
     {
         foreach (Thing t in cmd.consumables)
@@ -373,24 +411,26 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
             // For some check the equipment's stowed list
             if (cmd.action == ServiceLocator.Actions.Weld || cmd.action == ServiceLocator.Actions.Power || cmd.action == ServiceLocator.Actions.Charge || cmd.action == ServiceLocator.Actions.Eject || cmd.action == ServiceLocator.Actions.Unstow)
             {
-                // For actions that require that reagents be internally present:
-                // -Check to see if a given stowed item meets the requirements of the cmd
-                // -Then make sure that the ref for the cmd doesn't already contain a redundant one
-                // -If that's good, then add the given stowed item to the refs
+                //    For actions that require that reagents be internally present:
+                //    -Check to see if a given stowed item meets the requirements of the cmd
+                //    - Then make sure that the ref for the cmd doesn't already contain a redundant one
+                //     - If that's good, then add the given stowed item to the refs
+
                 for (int i = 0; i < e.stowed.Count; i++)
                 {
                     for (int j = 0; j < cmd.reagents.Length; j++)
                     {
                         if (e.stowed[i].type == cmd.reagents[j].reagentType.type)
                         {
-                            List<ServiceLocator.Interactives> storedReferenceTypes = new List<ServiceLocator.Interactives>();
-                            foreach(Item_Base iB in cRef.reagentRefs)
+                            List<ServiceLocator.ThingType> storedReferenceTypes = new List<ServiceLocator.ThingType>();
+                            foreach (Item_Base iB in cRef.reagentRefs)
                             {
                                 storedReferenceTypes.Add(iB.type);
                             }
 
                             if (!storedReferenceTypes.Contains(cmd.reagents[j].reagentType.type))
                             {
+                                Debug.Log("Item of type of reagent specified type stored. Item is " + e.stowed[i].name.ToString());
                                 cRef.reagentRefs.Add(e.stowed[i] as Item_Base);
                             }
                         }
@@ -408,9 +448,130 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
         }
     }
 
-    private void _StoreTargetRefs(ServiceLocator.ID id, CommandReferences cRef, Command cmd)
+    private void _StoreTargetRefs(ServiceLocator.ID id, Equipment_Base e, CommandReferences cRef, Command cmd)
     {
-        cRef.target = _objIntModel.ClosestThingOfTypeInOOC(id, cmd.target);
+        if (cmd.action == ServiceLocator.Actions.Charge || cmd.action == ServiceLocator.Actions.Eject || cmd.action == ServiceLocator.Actions.Unstow)
+        {
+            foreach (Thing t in e.stowed)
+            {
+                Item_Base iB = t as Item_Base;
+                Equipment_Base eB = t as Equipment_Base;
+
+                if (iB != null)
+                {
+                    if (iB.type == cmd.target)
+                    {
+                        Debug.Log("CREF!!! --- " + cmd.target.ToString() + " should match with " + iB.type.ToString());
+
+                        cRef.target = iB;
+
+                        Debug.Log("CREF!!! --- " + cRef.target.ToString());
+                        break;
+                    }
+                }
+                else if (eB != null)
+                {
+                    if (eB.type == cmd.target)
+                    {
+                        Debug.Log("CREF!!! --- " + cmd.target.ToString() + " should match with " + eB.type.ToString());
+
+                        cRef.target = eB;
+
+                        Debug.Log("CREF!!! --- " + cRef.target.ToString());
+                        break;
+                    }
+                }
+            }
+        }
+        else
+            cRef.target = _objIntModel.ClosestThingOfTypeInOOC(id, cmd.target);
+    }
+
+    #endregion
+
+    #region External Asynchronous Functions
+
+    public void ExecuteCommand(ServiceLocator.ID id)
+    {
+        //------------------------------
+        //Item resource consumption should be relocated to objInteractionController
+        //------------------------------
+        if (id == ServiceLocator.ID.p0)
+        {
+            Command cmd;
+            _eqptMenuModel.p0EqptCommandSeq.TryGetValue(_gameModel.EqptMenuSelect_P0, out cmd);
+
+            //foreach (int sd in _eqptMenuModel.p0EqptCommandSeq.Keys)
+            //{
+            //    Debug.Log(sd);
+            //    Command asdasd;
+            //    _eqptMenuModel.p0EqptCommandSeq.TryGetValue(sd, out asdasd);
+            //    Debug.Log(asdasd.target.ToString());
+
+            //    CommandReferences ddd;
+            //    _eqptMenuModel.p0EqptCommandsActive.TryGetValue(asdasd, out ddd);
+            //    Debug.Log(ddd.name);
+            //    if (ddd.target != null)
+            //        Debug.Log("YAAAAAAAAAAAAAAAAAAAAAAAAY NOT NULL");
+            //}
+
+            CommandReferences cRef;
+            _eqptMenuModel.p0EqptCommandsActive.TryGetValue(cmd, out cRef);
+
+            if (cmd.action == ServiceLocator.Actions.Install)
+            {
+                _objIntCtrlr.StowAndInstall(_eqptMenuModel.p0eqpt, cRef.target);
+            }
+            else if (cmd.action == ServiceLocator.Actions.Stow)
+            {
+                _objIntCtrlr.StowAndInstall(_eqptMenuModel.p0eqpt, cRef.target);
+            }
+            else if (cmd.action == ServiceLocator.Actions.Eject)
+            {
+                //Debug.Log(cRef.target.name);
+                _objIntCtrlr.Eject(_eqptMenuModel.p0eqpt, cRef.target);
+
+                if (cmd.reagents.Length > 0)
+                {
+                    foreach (Reagent r in cmd.reagents)
+                    {
+                        foreach (Item_Base i in cRef.reagentRefs)
+                        {
+                            if (r.reagentType.type == i.type)
+                            {
+                                i.capacity += r.discreteActionCost;
+                                i.capacity += r.continuousCostPerSecond * Time.deltaTime;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (cmd.action == ServiceLocator.Actions.Unstow)
+            {
+                _objIntCtrlr.Unstow(_eqptMenuModel.p0eqpt, cRef.target);
+
+                if (cmd.reagents.Length > 0)
+                {
+                    foreach (Reagent r in cmd.reagents)
+                    {
+                        foreach (Item_Base i in cRef.reagentRefs)
+                        {
+                            if (r.reagentType.type == i.type)
+                            {
+                                i.capacity += r.discreteActionCost;
+                                i.capacity += r.continuousCostPerSecond * Time.deltaTime;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (cmd.action == ServiceLocator.Actions.Exit)
+            {
+                _gameModel.SetControlState(ServiceLocator.ID.p0, ServiceLocator.ControlStates.Free);
+            }
+        }
+
+        _gameModel.SetControlState(id, ServiceLocator.ControlStates.Free);
     }
 
     #endregion

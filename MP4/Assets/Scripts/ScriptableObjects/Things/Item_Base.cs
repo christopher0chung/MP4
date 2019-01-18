@@ -12,7 +12,7 @@ public class Item_Base : Thing {
 
     public Item_Base()
     {
-        cat = ServiceLocator.InteractivesCategory.Items;
+        cat = ServiceLocator.ThingCategory.Items;
         //Debug.Log("This " + type + " is a " + cat + ".");
     }
 }

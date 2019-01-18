@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ServiceLocator {
 
+    #region Services
+
     private static ServiceLocator _i;
     public static ServiceLocator Instance
     {
@@ -93,9 +95,11 @@ public class ServiceLocator {
         }
     }
 
+    #endregion
+
     #region Functions
 
-    public bool DoesListOfThingsContainThingOfTypeItem(List<Thing> list, Interactives type)
+    public bool DoesListOfThingsContainThingOfTypeItem(List<Thing> list, ThingType type)
     {
         foreach(Thing t in list)
         {
@@ -107,7 +111,7 @@ public class ServiceLocator {
         return false;
     }
     
-    public bool DoesListOfThingsContainThingOfTypeEquipment(List<Thing> list, Interactives type)
+    public bool DoesListOfThingsContainThingOfTypeEquipment(List<Thing> list, ThingType type)
     {
         foreach (Thing t in list)
         {
@@ -128,7 +132,7 @@ public class ServiceLocator {
     public enum Inputs { Up, Down, Left, Right, Grab, Use }
     public enum InputStates { OnDown, Down, OnUp }
 
-    public enum Interactives {
+    public enum ThingType {
         //Items
         O2Tank, ArTank, Battery, N2Tank,
         //Consumables
@@ -142,16 +146,16 @@ public class ServiceLocator {
         //Stations
         Stn_Helm, Stn_LeeHelm, Stn_Crane,
         //None
-        None
+        Menu
     }
 
-    public enum InteractivesCategory { Items, Equipment, Stations, Consumables, Modifiables }
+    public enum ThingCategory { Items, Equipment, Stations, Consumables, Modifiables }
 
     public enum ItemStates { Loose, Held, Stowed, Ejecting }
 
     public enum EquipmentStates { Loose, Held, Stowed, Fixed, Operating }
 
-    public enum Actions { Weld, Patch, Power, Charge, Energize, Shut, Repair, Install, Eject, Stow, Unstow, Cancel }
+    public enum Actions { Weld, Patch, Power, Charge, Energize, Shut, Repair, Install, Eject, Stow, Unstow, Exit }
     public enum ActionType { Discrete, Continuous }
     //public enum Condition { Leaking, Ruptured, Underpowered, Unpowered, Tripped, MechanicallyFailed, CatastrophiclyFailed, Discharged, Required, Patched, This }
     #endregion

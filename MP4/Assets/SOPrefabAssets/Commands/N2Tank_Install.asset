@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reagents:
   - {fileID: 11400000, guid: 70efd0ec5e4a92341adb2910f1ca814a, type: 2}
+  consumables: []
   playerPresenceRequired: 1
   action: 7
   target: 3

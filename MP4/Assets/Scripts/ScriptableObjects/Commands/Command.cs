@@ -10,7 +10,7 @@ public class Command : ScriptableObject {
     public bool playerPresenceRequired;
     public ServiceLocator.Actions action;
     //public ServiceLocator.Condition condition;
-    public ServiceLocator.Interactives target;
+    public ServiceLocator.ThingType target;
     public ServiceLocator.ActionType actionType;
     public float timeTotal;
 }

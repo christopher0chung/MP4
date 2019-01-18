@@ -9,13 +9,13 @@ public class Equipment_Base : Thing {
     public ServiceLocator.ID holderOperator;
     public Equipment_Base stowingEqpt;
 
-    public List<ServiceLocator.Interactives> stowable = new List<ServiceLocator.Interactives>();
+    public List<ServiceLocator.ThingType> stowable = new List<ServiceLocator.ThingType>();
     public List<Thing> stowed = new List<Thing>();
     public Command[] possibleCommands;
 
     public Equipment_Base()
     {
-        cat = ServiceLocator.InteractivesCategory.Equipment;
+        cat = ServiceLocator.ThingCategory.Equipment;
         //Debug.Log("This " + type + " is a " + cat + ".");
     }
 }

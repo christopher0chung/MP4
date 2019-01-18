@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Name: Welder
   m_EditorClassIdentifier: 
   type: 7
+  cat: 1
+  highlighted: 0
   state: 0
   holderOperator: 0
   stowingEqpt: {fileID: 0}
-  highlighted: 0
   stowable: 0100000002000000
   stowed: []
   possibleCommands:
-  - {fileID: 11400000, guid: 1792a715cd6e76f44bfcfa55008f1e3a, type: 2}
-  - {fileID: 11400000, guid: d1a4c90291576f145b8786fd87bacfc7, type: 2}
-  - {fileID: 11400000, guid: c4a533a215b94624593740d420623215, type: 2}
-  - {fileID: 11400000, guid: 3c3fcc7eed3269640b2e83763262660f, type: 2}
-  - {fileID: 11400000, guid: eed41dce47f957644a29c023b9d7ccd8, type: 2}
+  - {fileID: 11400000, guid: bb8d6952e2867b24d89e91b949b9d33a, type: 2}
+  - {fileID: 11400000, guid: f79ec9c83f261fe4cb79d5567c764a10, type: 2}
+  - {fileID: 11400000, guid: 5f26352588d6f194ea62dd246aaec2d8, type: 2}
+  - {fileID: 11400000, guid: 38b2594b73b875e4799c5803168415c1, type: 2}
+  - {fileID: 11400000, guid: 3358097a52ca6f04bac0506bcaf524e2, type: 2}
+  - {fileID: 11400000, guid: 2115d2e2cde432242bf58438a467f8fa, type: 2}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Thing : ScriptableObject {
-    public ServiceLocator.Interactives type;
-    public ServiceLocator.InteractivesCategory cat;
+    public ServiceLocator.ThingType type;
+    public ServiceLocator.ThingCategory cat;
     public bool highlighted;
 }

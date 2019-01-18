@@ -27,30 +27,32 @@ public class ViewItem : ViewThing_Generic {
             Debug.Assert(_col != null, "Prefab missing collider");
             Debug.Assert(_mr != null, "Prefab missing mesh renderer");
 
-            if (_oIData.type == ServiceLocator.Interactives.ArTank)
+            if (_oIData.type == ServiceLocator.ThingType.ArTank)
             {
                 //Init Ar Tank
                 _rb.mass = 20;
                 _trig.radius = .8f;
             }
-            else if (_oIData.type == ServiceLocator.Interactives.Battery)
+            else if (_oIData.type == ServiceLocator.ThingType.Battery)
             {
                 _rb.mass = 6;
                 _trig.radius = .6f;
             }
-            else if (_oIData.type == ServiceLocator.Interactives.N2Tank)
+            else if (_oIData.type == ServiceLocator.ThingType.N2Tank)
             {
                 _rb.mass = 20;
                 _trig.radius = .8f;
             }
-            else if (_oIData.type == ServiceLocator.Interactives.O2Tank)
+            else if (_oIData.type == ServiceLocator.ThingType.O2Tank)
             {
                 _rb.mass = 20;
                 _trig.radius = .8f;
             }
 
-            _set = true;
+            _currentState = _oIData.state;
+            // Fallback in case the state is the default value
             _StateBasedComponentConfiguration(_oIData.state);
+            _set = true;
         }
     }
 
@@ -104,6 +106,7 @@ public class ViewItem : ViewThing_Generic {
 
     private void _StateBasedComponentConfiguration(ServiceLocator.ItemStates state)
     {
+        Debug.Log("Shift in item state. " + gameObject.name + " is now " + state.ToString());
         if (state == ServiceLocator.ItemStates.Held)
         {
             Destroy(_rb);
@@ -196,7 +199,7 @@ public class ViewItem : ViewThing_Generic {
         else if (_currentState == ServiceLocator.ItemStates.Stowed)
         {
             Debug.Assert(observedItemData.stowingEqpt != null, "No stowing eqpt set prior to state change");
-            transform.position = _objIntModel.WhereIsThing(observedItemData.stowingEqpt);
+            transform.position = _objIntModel.GetWhereIsThing(observedItemData.stowingEqpt);
         }
     }
 
@@ -205,7 +208,7 @@ public class ViewItem : ViewThing_Generic {
         Debug.Assert(!_set, "Attempting to change item data reference for a set item.");
 
         _rb = gameObject.AddComponent<Rigidbody>();
-        _rb.isKinematic = false;
+        _rb.isKinematic = true;
         _rb.interpolation = RigidbodyInterpolation.Interpolate;
         _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         _rb.constraints = RigidbodyConstraints.FreezePositionZ;

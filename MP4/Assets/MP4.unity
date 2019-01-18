@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -89,7 +89,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000002, guid: 69e8994d628ba294e89bafd7c0e0ec2f,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -678,7 +679,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 360242242}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 6.27, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1208887904}
@@ -695,9 +696,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7848d4fb527d38e4b88b942d4101fa01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  type: 12
+  startingStateForItems: 0
   startingCapacity: 100
-  stowedOrInstalled: 
+  startingStateForEqpt: 3
+  stowedOrInstalled: 00000000010000000200000007000000
 --- !u!1 &446857997
 GameObject:
   m_ObjectHideFlags: 0
@@ -1151,7 +1154,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 751196595}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1208887904}
@@ -1169,8 +1172,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 7
+  startingStateForItems: 0
   startingCapacity: 100
-  stowedOrInstalled: 
+  startingStateForEqpt: 0
+  stowedOrInstalled: 0100000002000000
 --- !u!1 &764789541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1648,12 +1653,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1473231748}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 2098698596}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1506162109
 GameObject:
@@ -1848,6 +1853,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 515d1ee33c6cbd74a91f93dae8a44229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  p0eqpt: {fileID: 0}
+  p1eqpt: {fileID: 0}
 --- !u!1 &1547164171
 GameObject:
   m_ObjectHideFlags: 0
@@ -2036,7 +2043,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1640301075
 Transform:
   m_ObjectHideFlags: 0
@@ -2044,7 +2051,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1640301074}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1208887904}
@@ -2061,8 +2068,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7848d4fb527d38e4b88b942d4101fa01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  type: 0
+  startingStateForItems: 0
   startingCapacity: 100
+  startingStateForEqpt: 0
   stowedOrInstalled: 
 --- !u!1 &1651637157
 GameObject:
@@ -2177,7 +2186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1749285186
 Transform:
   m_ObjectHideFlags: 0
@@ -2185,7 +2194,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1749285185}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1208887904}
@@ -2202,8 +2211,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7848d4fb527d38e4b88b942d4101fa01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  type: 0
+  startingStateForItems: 0
   startingCapacity: 100
+  startingStateForEqpt: 0
   stowedOrInstalled: 
 --- !u!1 &2017400746
 GameObject:
@@ -2466,6 +2477,7 @@ Transform:
   - {fileID: 1509858170}
   - {fileID: 1710786795}
   - {fileID: 2079782175}
+  - {fileID: 1473231751}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
