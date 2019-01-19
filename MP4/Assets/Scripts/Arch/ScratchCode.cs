@@ -33,6 +33,8 @@ public class ScratchCode : MonoBehaviour {
                 }
             }
         }
+
+        ServiceLocator.Instance.TaskManager.StartTask(new TestTask(new TestTask(new TestTask(null))));
 	}
 
     private void Update()

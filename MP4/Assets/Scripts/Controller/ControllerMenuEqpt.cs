@@ -64,7 +64,7 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
 
     public override void Awake()
     {
-        priority = 2999;
+        priority = 2998;
         base.Awake();
 
         _gameModel = ServiceLocator.Instance.Model.GetComponent<ModelGame>();

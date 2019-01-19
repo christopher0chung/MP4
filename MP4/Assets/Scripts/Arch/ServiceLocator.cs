@@ -95,6 +95,17 @@ public class ServiceLocator {
         }
     }
 
+    private MP4_TaskManager _tm;
+    public MP4_TaskManager TaskManager
+    {
+        get
+        {
+            if (_tm == null)
+                _tm = Application.gameObject.AddComponent<MP4_TaskManager>();
+            return _tm;
+        }
+    }
+
     #endregion
 
     #region Functions
