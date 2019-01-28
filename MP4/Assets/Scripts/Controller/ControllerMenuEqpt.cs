@@ -520,50 +520,25 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
 
             if (cmd.action == ServiceLocator.Actions.Install)
             {
-                _objIntCtrlr.StowAndInstall(_eqptMenuModel.p0eqpt, cRef.target);
+                //_objIntCtrlr.StowAndInstall(_eqptMenuModel.p0eqpt, cRef.target);
+                ServiceLocator.Instance.TaskManager.StartTask(new Task_InstallThing(null, id, _eqptMenuModel.p0eqpt, cmd, cRef));
             }
             else if (cmd.action == ServiceLocator.Actions.Stow)
             {
-                _objIntCtrlr.StowAndInstall(_eqptMenuModel.p0eqpt, cRef.target);
+                //_objIntCtrlr.StowAndInstall(_eqptMenuModel.p0eqpt, cRef.target);
+                ServiceLocator.Instance.TaskManager.StartTask(new Task_StowThing(null, id, _eqptMenuModel.p0eqpt, cmd, cRef));
             }
             else if (cmd.action == ServiceLocator.Actions.Eject)
             {
                 //Debug.Log(cRef.target.name);
-                _objIntCtrlr.Eject(_eqptMenuModel.p0eqpt, cRef.target);
+                //_objIntCtrlr.Eject(_eqptMenuModel.p0eqpt, cRef.target);
 
-                if (cmd.reagents.Length > 0)
-                {
-                    foreach (Reagent r in cmd.reagents)
-                    {
-                        foreach (Item_Base i in cRef.reagentRefs)
-                        {
-                            if (r.reagentType.type == i.type)
-                            {
-                                i.capacity += r.discreteActionCost;
-                                i.capacity += r.continuousCostPerSecond * Time.deltaTime;
-                            }
-                        }
-                    }
-                }
+                ServiceLocator.Instance.TaskManager.StartTask(new Task_EjectThing(null, id, _eqptMenuModel.p0eqpt, cmd, cRef));
             }
             else if (cmd.action == ServiceLocator.Actions.Unstow)
             {
-                _objIntCtrlr.Unstow(_eqptMenuModel.p0eqpt, cRef.target);
-
-                if (cmd.reagents.Length > 0)
-                {
-                    foreach (Reagent r in cmd.reagents)
-                    {
-                        foreach (Item_Base i in cRef.reagentRefs)
-                        {
-                            if (r.reagentType.type == i.type)
-                            {
-                                i.capacity += r.discreteActionCost;
-                                i.capacity += r.continuousCostPerSecond * Time.deltaTime;
-                            }
-                        }
-                    }
-                }
+                //_objIntCtrlr.Unstow(_eqptMenuModel.p0eqpt, cRef.target);
+                ServiceLocator.Instance.TaskManager.StartTask(new Task_UnstowThing(null, id, _eqptMenuModel.p0eqpt, cmd, cRef));
             }
             else if (cmd.action == ServiceLocator.Actions.Exit)
             {
@@ -571,7 +546,7 @@ public class ControllerMenuEqpt : MP4_ScheduledMono {
             }
         }
 
-        _gameModel.SetControlState(id, ServiceLocator.ControlStates.Free);
+        //_gameModel.SetControlState(id, ServiceLocator.ControlStates.Free);
     }
 
     #endregion

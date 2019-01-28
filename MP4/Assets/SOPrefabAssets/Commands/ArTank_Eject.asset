@@ -13,8 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reagents:
   - {fileID: 11400000, guid: 65bedcd5b382bd142956b96f2bb09d9f, type: 2}
+  consumables: []
   playerPresenceRequired: 0
   action: 8
   target: 1
   actionType: 0
-  timeTotal: 0.2
+  timeTotal: 1

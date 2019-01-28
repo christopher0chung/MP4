@@ -376,7 +376,8 @@ public class ControllerGame : MP4_ScheduledMono {
 
             if (Context._inputModel.P0_Grab_OnDown)
             {
-                Context._gameModel.SetControlState(ServiceLocator.ID.p0, ServiceLocator.ControlStates.Free);
+                //Context._gameModel.SetControlState(ServiceLocator.ID.p0, ServiceLocator.ControlStates.Free);
+                
                 Debug.Log("P0 Cancel Occupied");
             }
         }
